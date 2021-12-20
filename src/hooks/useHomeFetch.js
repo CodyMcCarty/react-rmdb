@@ -23,8 +23,6 @@ export const useHomeFetch = () => {
       setError(false);
       setLoading(true);
       const movies = await API.fetchMovies(searchTerm, page);
-      // console.log(process.env.REACT_APP_API_KEY);
-      // console.log(movies);
       setMoviesState((prev) => ({
         ...movies,
         results:
