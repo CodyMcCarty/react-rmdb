@@ -1,34 +1,50 @@
-import React, { useEffect, useState } from 'react'
-import API from '../API';
-import { POSTER_SIZE, BACKDROP_SIZE, IMAGE_BASE_URL } from '../config'
-import NoImage from '../images/no_image.jpg'
+import React from 'react';
+import { POSTER_SIZE, BACKDROP_SIZE, IMAGE_BASE_URL } from '../config';
+import NoImage from '../images/no_image.jpg';
+import { useHomeFetch } from '../hooks/useHomeFetch';
+import HeroImage from './HeroImage/HeroImage';
+import Grid from './Grid/Grid';
+import Thumb from './Thumb/Thumb';
+import Spinner from './Spinner/Spinner';
+import SearchBar from './SearchBar/SearchBar';
 
-function Home() {
-  const [state, setState] = useState();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
-  const fetchMovies = async (page, searchTerm = '') => {
-    try {
-      setError(false);
-      setLoading(true);
-      const movies = await API.fetchMovies(searchTerm, page);
-      console.log(process.env.REACT_APP_API_KEY)
-      console.log(movies)
-    } catch (err) {
-      setError(true);
-    }
-  };
-
-  useEffect(() => {
-    fetchMovies(1);
-  }, [])
+const Home = () => {
+  const {
+    moviesState, loading, error, setSearchTerm
+  } = useHomeFetch();
+  console.log(moviesState);
 
   return (
-    <div>
-      Home Page
-    </div>
-  )
-}
+    <>
+      {moviesState.results[0]
+        ? (
+          <HeroImage
+            image={`${IMAGE_BASE_URL}${BACKDROP_SIZE}${moviesState.results[0].backdrop_path}`}
+            title={moviesState.results[0].original_title}
+            text={moviesState.results[0].overview}
+          />
+        )
+        : null}
+      <SearchBar setSearchTerm={setSearchTerm} />
+      <Grid header="Popular Movies">
+        {moviesState.results.map((movie) => (
+          <Thumb
+            key={movie.id}
+            clickable
+            image={
+            movie.poster_path
+              ? IMAGE_BASE_URL + POSTER_SIZE + movie.poster_path
+              : NoImage
+          }
+            movieId={movie.id}
+          />
 
-export default Home
+          // <div key={movie.id}>{movie.title}</div>
+        ))}
+      </Grid>
+      <Spinner />
+    </>
+  );
+};
+
+export default Home;

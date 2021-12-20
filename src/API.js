@@ -1,3 +1,4 @@
+/* eslint-disable no-return-await */
 import {
   SEARCH_BASE_URL,
   POPULAR_BASE_URL,
@@ -22,11 +23,11 @@ const apiSettings = {
       : `${POPULAR_BASE_URL}&page=${page}`;
     return await (await fetch(endpoint)).json();
   },
-  fetchMovie: async movieId => {
+  fetchMovie: async (movieId) => {
     const endpoint = `${API_URL}movie/${movieId}?api_key=${API_KEY}`;
     return await (await fetch(endpoint)).json();
   },
-  fetchCredits: async movieId => {
+  fetchCredits: async (movieId) => {
     const creditsEndpoint = `${API_URL}movie/${movieId}/credits?api_key=${API_KEY}`;
     return await (await fetch(creditsEndpoint)).json();
   },
@@ -35,6 +36,7 @@ const apiSettings = {
     const reqToken = await (await fetch(REQUEST_TOKEN_URL)).json();
     return reqToken.request_token;
   },
+  // eslint-disable-next-line consistent-return
   authenticate: async (requestToken, username, password) => {
     const bodyData = {
       username,
